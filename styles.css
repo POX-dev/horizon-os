@@ -1,0 +1,258 @@
+/* HorizonOS Desktop Styles */
+:root {
+    --bg-color:#333;
+    --secondary-contrast:#407080;
+    --contrast-color:#00BFFF;
+    --main-color:#FFA600;
+    --secondary-color:#FF5500;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
+    color: #fff;
+    height: 100vh;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.desktop {
+    height: calc(100vh - 70px);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 80px;
+    font-weight: bold;
+    text-align: center;
+    pointer-events: none;
+}
+
+.logo-text {
+    letter-spacing: 4px;
+    color: #ffc0e5;
+    filter: blur(3px);
+}
+
+.logo-os {
+    color: #ff8cb7;
+    filter: drop-shadow(0px 0px 20px #aa3367);
+}
+
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 90px);
+    gap: 20px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+    justify-content: start;
+}
+
+.app-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 16px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 182, 214, 0.4);
+}
+
+.app-icon:hover {
+    transform: translateY(-5px) scale(1.05);
+}
+
+.app-icon-img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff8cb7;
+}
+
+.app-name {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    word-wrap: break-word;
+    max-width: 85px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-color);
+    backdrop-filter: blur(20px);
+    border-radius: 20px 20px 0 0;
+    padding: 12px 25px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.taskbar-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 12px;
+    font-size: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.time {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.window {
+    position: absolute;
+    background: var(--bg-color);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    min-width: 400px;
+    min-height: 300px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    border: 2px solid rgba(255, 192, 229, 0.6);
+    z-index: 100;
+}
+
+.window.active {
+    display: flex;
+}
+
+.window-header {
+    background: linear-gradient(135deg, rgba(255, 182, 214, 0.6), rgba(255, 192, 229, 0.6));
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    user-select: none;
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.window-title {
+    font-weight: 700;
+    font-size: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.window-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.close-btn {
+    background: #ff5f57;
+    color: white;
+}
+
+.minimize-btn {
+    background: #ffbd2e;
+    color: white;
+}
+
+.maximize-btn {
+    background: #28ca42;
+    color: white;
+}
+
+.window-content {
+    flex: 1;
+    padding: 0;
+    overflow: auto;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.browser-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.url-bar-container {
+    display: flex;
+    padding: 8px;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.url-bar {
+    flex: 1;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.go-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    background: var(--secondary-color);
+    color: white;
+    cursor: pointer;
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>horizonOS</title>
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#434c5e">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Bootstrap Icons for app icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <div class="desktop">
+        <div class="logo">
+            <div class="logo-text"><span>HORIZON</span><span class="logo-os">OS</span></div>
+        </div>
+
+        <div class="apps-grid">
+            <div class="app-icon" onclick="openApp('browser')">
+                <div class="app-icon-img"><i class="bi bi-globe"></i></div>
+                <div class="app-name">Browser</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="taskbar">
+        <div class="taskbar-icon" onclick="openApp('browser')"><i class="bi bi-globe"></i></div>
+        <div class="time" id="clock">00:00:00</div>
+    </div>
+
+    <!-- Browser Window -->
+    <div class="window" id="browserWindow" style="width:90%;height:85%;top:5%;left:5%;">
+        <div class="window-header">
+            <div class="window-title"><i class="bi bi-globe"></i> Browser</div>
+            <div class="window-controls">
+                <div class="window-btn minimize-btn" onclick="minimizeWindow('browserWindow')">−</div>
+                <div class="window-btn maximize-btn" onclick="maximizeWindow('browserWindow')">□</div>
+                <div class="window-btn close-btn" onclick="closeWindow('browserWindow')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="url-bar-container">
+                <input type="text" id="urlBar" class="url-bar" placeholder="Enter URL or search...">
+                <button class="go-btn" onclick="navigateUrl()">Go</button>
+            </div>
+            <iframe id="browserFrame" class="browser-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
+        </div>
+    </div>
+
+    <!-- Static UV Proxy Scripts -->
+    <script src="uv/uv.bundle.js"></script>
+    <script src="uv/uv.config.js"></script>
+    <script src="index.js"></script>
+
+    <script>
+        // HorizonOS JS
+        let draggedWindow = null;
+        let browserHistory = [], historyIndex = -1;
+
+        function openApp(app){
+            const win=document.getElementById(app+'Window');
+            if(win){win.style.display='flex';win.classList.add('active'); bringToFront(win);}
+        }
+        function closeWindow(id){ const win=document.getElementById(id); win.style.display='none'; win.classList.remove('active'); }
+        function minimizeWindow(id){ document.getElementById(id).style.display='none'; }
+        function maximizeWindow(id){
+            const win=document.getElementById(id);
+            const isMax=win.style.width==='100%';
+            if(isMax){win.style.width='80%';win.style.height='80%';win.style.top='10%';win.style.left='10%';}
+            else{win.style.width='100%';win.style.height='calc(100% - 70px)';win.style.top='0';win.style.left='0';}
+        }
+        function bringToFront(win){ document.querySelectorAll('.window').forEach(w=>w.style.zIndex='100'); win.style.zIndex='1000'; }
+
+        document.querySelectorAll('.window-header').forEach(h=>{
+            h.addEventListener('mousedown',e=>{
+                if(e.target.closest('.window-btn')) return;
+                draggedWindow=h.closest('.window'); bringToFront(draggedWindow);
+                const rect=draggedWindow.getBoundingClientRect();
+                offsetX=e.clientX-rect.left; offsetY=e.clientY-rect.top;
+            });
+        });
+        document.addEventListener('mousemove',e=>{ if(draggedWindow){ draggedWindow.style.left=(e.clientX-offsetX)+'px'; draggedWindow.style.top=(e.clientY-offsetY)+'px'; } });
+        document.addEventListener('mouseup',()=>{ draggedWindow=null; });
+
+        // CLOCK
+        function updateClock(){ const now=new Date(); const h=String(now.getHours()).padStart(2,'0'); const m=String(now.getMinutes()).padStart(2,'0'); const s=String(now.getSeconds()).padStart(2,'0'); document.getElementById('clock').textContent=`${h}:${m}:${s}`;}
+        setInterval(updateClock,1000); updateClock();
+
+        // Browser with Static UV
+        const UV_HOSTS = ["uv"]; // Path to your UV static proxy folder
+        let activeUV = 0;
+
+        function normalizeInput(input){
+            input = input.trim(); 
+            if(!input) return null;
+            if(!input.startsWith("http")){
+                if(input.includes(" ")||!input.includes(".")){ 
+                    input = "https://www.google.com/search?q=" + encodeURIComponent(input);
+                } else { 
+                    input = "https://" + input; 
+                }
+            }
+            return input;
+        }
+
+        function navigateUrl(){
+            const bar = document.getElementById("urlBar");
+            const iframe = document.getElementById("browserFrame");
+            const target = normalizeInput(bar.value);
+            if(!target) return;
+            iframe.src = UV_HOSTS[activeUV] + "/?q=" + encodeURIComponent(target);
+            if(historyIndex < browserHistory.length - 1){
+                browserHistory = browserHistory.slice(0, historyIndex + 1);
+            }
+            browserHistory.push(target);
+            historyIndex++;
+        }
+
+        // Load Google by default
+        document.getElementById('browserFrame').src = UV_HOSTS[activeUV] + "/?q=" + encodeURIComponent("https://www.google.com");
+        document.getElementById('urlBar').value = "https://www.google.com";
+    </script>
+</body>
+</html>
